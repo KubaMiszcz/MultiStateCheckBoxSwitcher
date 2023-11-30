@@ -2,8 +2,8 @@ import {
     App,
     Editor,
     MarkdownView,
-    Modal,
-    Notice,
+    // Modal,
+    // Notice,
     Plugin,
     PluginSettingTab,
     Setting,
@@ -11,12 +11,32 @@ import {
 
 // Remember to rename these classes and interfaces!
 
+interface IStateItem {
+    value: string;
+    isEnabled: boolean;
+}
+
 interface MultiStateCheckBoxSwitcherSettings {
     mySetting: string;
+    AdditionalStateNo1: string;
+    AdditionalStates: IStateItem[];
 }
 
 const DEFAULT_SETTINGS: MultiStateCheckBoxSwitcherSettings = {
     mySetting: "default",
+    AdditionalStateNo1: "!",
+    AdditionalStates: [
+        { value: "!", isEnabled: true },
+        { value: "?", isEnabled: true },
+        { value: "i", isEnabled: true },
+        { value: ">", isEnabled: true },
+        { value: "<", isEnabled: true },
+        { value: "f", isEnabled: true },
+        { value: "I", isEnabled: true },
+        { value: "k", isEnabled: true },
+        { value: "u", isEnabled: true },
+        { value: "d", isEnabled: true },
+    ],
 };
 
 export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
@@ -26,58 +46,61 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
         await this.loadSettings();
 
         // This creates an icon in the left ribbon.
-        const ribbonIconEl = this.addRibbonIcon(
-            "dice",
-            "Multi State CheckBox Switcher",
-            (evt: MouseEvent) => {
-                // Called when the user clicks the icon.
-                new Notice("This is a notice!");
-            }
-        );
+        // const ribbonIconEl = this.addRibbonIcon(
+        //     "dice",
+        //     "Multi State CheckBox Switcher",
+        //     (evt: MouseEvent) => {
+        //         // Called when the user clicks the icon.
+        //         new Notice("This is a notice!");
+        //     }
+        // );
+
         // Perform additional things with the ribbon
-        ribbonIconEl.addClass("multi-state-checkbox-switcher-ribbon-class");
+        // ribbonIconEl.addClass("multi-state-checkbox-switcher-ribbon-class");
 
         // This adds a status bar item to the bottom of the app. Does not work on mobile apps.
-        const statusBarItemEl = this.addStatusBarItem();
-        statusBarItemEl.setText("Status Bar Text");
+        // const statusBarItemEl = this.addStatusBarItem();
+        // statusBarItemEl.setText("Status Bar Text");
 
         // This adds a simple command that can be triggered anywhere
-        this.addCommand({
-            id: "open-sample-modal-simple",
-            name: "Open sample modal (simple)",
-            callback: () => {
-                new SampleModal(this.app).open();
-            },
-        });
-        // This adds an editor command that can perform some operation on the current editor instance
-        this.addCommand({
-            id: "sample-editor-command",
-            name: "Sample editor command",
-            editorCallback: (editor: Editor, view: MarkdownView) => {
-                console.log(editor.getSelection());
-                editor.replaceSelection("Sample Editor Command");
-            },
-        });
-        // This adds a complex command that can check whether the current state of the app allows execution of the command
-        this.addCommand({
-            id: "open-sample-modal-complex",
-            name: "Open sample modal (complex)",
-            checkCallback: (checking: boolean) => {
-                // Conditions to check
-                const markdownView =
-                    this.app.workspace.getActiveViewOfType(MarkdownView);
-                if (markdownView) {
-                    // If checking is true, we're simply "checking" if the command can be run.
-                    // If checking is false, then we want to actually perform the operation.
-                    if (!checking) {
-                        new SampleModal(this.app).open();
-                    }
+        // this.addCommand({
+        //     id: "open-sample-modal-simple",
+        //     name: "Open sample modal (simple)",
+        //     callback: () => {
+        //         new SampleModal(this.app).open();
+        //     },
+        // });
 
-                    // This command will only show up in Command Palette when the check function returns true
-                    return true;
-                }
-            },
-        });
+        // This adds an editor command that can perform some operation on the current editor instance
+        // this.addCommand({
+        //     id: "sample-editor-command",
+        //     name: "Sample editor command",
+        //     editorCallback: (editor: Editor, view: MarkdownView) => {
+        //         console.log(editor.getSelection());
+        //         editor.replaceSelection("Sample Editor Command");
+        //     },
+        // });
+
+        // This adds a complex command that can check whether the current state of the app allows execution of the command
+        // this.addCommand({
+        //     id: "open-sample-modal-complex",
+        //     name: "Open sample modal (complex)",
+        //     checkCallback: (checking: boolean) => {
+        //         // Conditions to check
+        //         const markdownView =
+        //             this.app.workspace.getActiveViewOfType(MarkdownView);
+        //         if (markdownView) {
+        //             // If checking is true, we're simply "checking" if the command can be run.
+        //             // If checking is false, then we want to actually perform the operation.
+        //             if (!checking) {
+        //                 new SampleModal(this.app).open();
+        //             }
+
+        //             // This command will only show up in Command Palette when the check function returns true
+        //             return true;
+        //         }
+        //     },
+        // });
 
         // This adds a settings tab so the user can configure various aspects of the plugin
         this.addSettingTab(new SampleSettingTab(this.app, this));
@@ -105,8 +128,8 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
                 const currentCursorPosition = editor.getCursor();
                 const currentLine = editor.getLine(currentLineNumber);
                 const pattern = /- \[.\] /;
-                let newLine = currentLine; 
-                
+                let newLine = currentLine;
+
                 if (currentLine.startsWith("- [ ] ")) {
                     newLine = currentLine.replace(pattern, "- [/] ");
                 } else if (currentLine.startsWith("- [/] ")) {
@@ -114,7 +137,7 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
                 } else {
                     newLine = currentLine.replace(pattern, "- [ ] ");
                 }
-                
+
                 editor.setLine(currentLineNumber, newLine);
                 editor.setCursor(currentCursorPosition);
             },
@@ -128,22 +151,20 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
                 const currentCursorPosition = editor.getCursor();
                 const currentLine = editor.getLine(currentLineNumber);
                 const pattern = /- \[.\] /;
-                let newLine = currentLine; 
-                
+                let newLine = currentLine;
+
                 if (currentLine.startsWith("- [ ] ")) {
                     newLine = currentLine.replace(pattern, "- [!] ");
-                } 
-                else if (currentLine.startsWith("- [!] ")) {
+                } else if (currentLine.startsWith("- [!] ")) {
                     newLine = currentLine.replace(pattern, "- [?] ");
-                } 
-                else if (currentLine.startsWith("- [?] ")) {
+                } else if (currentLine.startsWith("- [?] ")) {
                     newLine = currentLine.replace(pattern, "- [>] ");
                 } else if (currentLine.startsWith("- [>] ")) {
                     newLine = currentLine.replace(pattern, "- [f] ");
                 } else {
                     newLine = currentLine.replace(pattern, "- [ ] ");
                 }
-                
+
                 editor.setLine(currentLineNumber, newLine);
                 editor.setCursor(currentCursorPosition);
             },
@@ -165,21 +186,21 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
     }
 }
 
-class SampleModal extends Modal {
-    constructor(app: App) {
-        super(app);
-    }
+// class SampleModal extends Modal {
+//     constructor(app: App) {
+//         super(app);
+//     }
 
-    onOpen() {
-        const { contentEl } = this;
-        contentEl.setText("Woah!");
-    }
+//     onOpen() {
+//         const { contentEl } = this;
+//         contentEl.setText("Woah!");
+//     }
 
-    onClose() {
-        const { contentEl } = this;
-        contentEl.empty();
-    }
-}
+//     onClose() {
+//         const { contentEl } = this;
+//         contentEl.empty();
+//     }
+// }
 
 class SampleSettingTab extends PluginSettingTab {
     plugin: MultiStateCheckBoxSwitcherPlugin;
@@ -194,17 +215,26 @@ class SampleSettingTab extends PluginSettingTab {
 
         containerEl.empty();
 
-        new Setting(containerEl)
-            .setName("Setting #1")
-            .setDesc("It's a secret")
-            .addText((text) =>
-                text
-                    .setPlaceholder("Enter your secret")
-                    .setValue(this.plugin.settings.mySetting)
-                    .onChange(async (value) => {
-                        this.plugin.settings.mySetting = value;
-                        await this.plugin.saveSettings();
-                    })
-            );
+        this.plugin.settings.AdditionalStates.forEach((state, idx) => {
+            new Setting(containerEl)
+                .setName("Additional state number " + idx)
+                // .setDesc("value")
+                .addText((text) =>
+                    text
+                        .setPlaceholder("Enter single character")
+                        .setValue(state.value)
+                        .onChange(async (value) => {
+                            state.value = value;
+                            await this.plugin.saveSettings();
+                        })
+                )
+                .addToggle((toggle) =>
+                    toggle
+                        .setValue(state.isEnabled).onChange(async (value) => {
+                            state.isEnabled = value;
+                            await this.plugin.saveSettings();
+                        })
+                );
+        });
     }
 }
