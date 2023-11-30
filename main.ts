@@ -125,12 +125,27 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
             name: "Toggle Additional states",
             editorCallback: (editor: Editor, view: MarkdownView) => {
                 const currentLineNumber = editor.getCursor().line;
+                const currentCursorPosition = editor.getCursor();
                 const currentLine = editor.getLine(currentLineNumber);
-                const pattern = /- \[ \] /;
-                const newLine = currentLine.replace(pattern, "- [/] "); 
-                // console.log(currentLine, newLine);
+                const pattern = /- \[.\] /;
+                let newLine = currentLine; 
+                
+                if (currentLine.startsWith("- [ ] ")) {
+                    newLine = currentLine.replace(pattern, "- [!] ");
+                } 
+                else if (currentLine.startsWith("- [!] ")) {
+                    newLine = currentLine.replace(pattern, "- [?] ");
+                } 
+                else if (currentLine.startsWith("- [?] ")) {
+                    newLine = currentLine.replace(pattern, "- [>] ");
+                } else if (currentLine.startsWith("- [>] ")) {
+                    newLine = currentLine.replace(pattern, "- [f] ");
+                } else {
+                    newLine = currentLine.replace(pattern, "- [ ] ");
+                }
+                
                 editor.setLine(currentLineNumber, newLine);
-                // editor.replaceSelection("Sample Editor Command");
+                editor.setCursor(currentCursorPosition);
             },
         });
     }
