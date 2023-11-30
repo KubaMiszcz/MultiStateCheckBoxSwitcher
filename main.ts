@@ -146,29 +146,27 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
         this.addCommand({
             id: "toggle-additional-states",
             name: "Toggle Additional states",
-            editorCallback: (editor: Editor, view: MarkdownView) => {                
+            editorCallback: (editor: Editor, view: MarkdownView) => {
                 const allStates = this.settings.AdditionalStates;
+                const currentLineNumber = editor.getCursor().line;
+                const currentLine = editor.getLine(currentLineNumber);
+                const currentCursorPosition = editor.getCursor();
 
                 let currentStateIdx = allStates.findIndex((s) =>
                     currentLine.trimStart().startsWith(`- [${s.value}] `)
                 );
 
-                let nextState:IStateItem;
+                let nextState: IStateItem;
                 do {
                     currentStateIdx++;
 
                     if (currentStateIdx >= allStates.length) {
                         nextState = { value: " ", isEnabled: true };
-                    } else{
+                    } else {
                         nextState = allStates[currentStateIdx];
                     }
                 } while (!nextState.isEnabled);
 
-
-
-                const currentLineNumber = editor.getCursor().line;
-                const currentCursorPosition = editor.getCursor();
-                const currentLine = editor.getLine(currentLineNumber);
                 const pattern = /- \[.\] /;
                 let newLine = currentLine;
 
