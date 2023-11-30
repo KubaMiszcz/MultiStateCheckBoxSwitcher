@@ -153,17 +153,55 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
                 const pattern = /- \[.\] /;
                 let newLine = currentLine;
 
-                if (currentLine.startsWith("- [ ] ")) {
-                    newLine = currentLine.replace(pattern, "- [!] ");
-                } else if (currentLine.startsWith("- [!] ")) {
-                    newLine = currentLine.replace(pattern, "- [?] ");
-                } else if (currentLine.startsWith("- [?] ")) {
-                    newLine = currentLine.replace(pattern, "- [>] ");
-                } else if (currentLine.startsWith("- [>] ")) {
-                    newLine = currentLine.replace(pattern, "- [f] ");
-                } else {
-                    newLine = currentLine.replace(pattern, "- [ ] ");
-                }
+                const allStates = this.settings.AdditionalStates;
+                const additionalStates = this.settings.AdditionalStates.filter(
+                    (s) => s.isEnabled
+                );
+                const additionalStatesCount = additionalStates.length;
+
+                let currentStateIdx = allStates.findIndex((s) =>
+                    currentLine.trimStart().startsWith(`- [${s.value}] `)
+                );
+                let currentState = allStates[currentStateIdx];
+
+                console.log(currentStateIdx);
+
+                let nextState = currentState;
+
+                do {
+                    currentStateIdx =
+                        currentStateIdx + 1 >= allStates.length
+                            ? 0
+                            : currentStateIdx + 1;
+                    nextState = allStates[currentStateIdx];
+
+
+
+
+                    
+                } while (!nextState.isEnabled);
+
+                console.log(nextState);
+
+                newLine = currentLine.replace(
+                    pattern,
+                    `- [${nextState.value}] `
+                );
+                console.log(currentState, nextState);
+
+                // if (currentLine.startsWith("- [ ] ")) {
+                //     newLine = currentLine.replace(pattern, "- [!] ");
+                // } else if (currentLine.startsWith("- [!] ")) {
+                //     newLine = currentLine.replace(pattern, "- [?] ");
+                // } else if (currentLine.startsWith("- [?] ")) {
+                //     newLine = currentLine.replace(pattern, "- [>] ");
+                // } else if (currentLine.startsWith("- [>] ")) {
+                //     newLine = currentLine.replace(pattern, "- [f] ");
+                // } else {
+                //     newLine = currentLine.replace(pattern, "- [ ] ");
+                // }
+
+                // console.log(currentLine,newLine);
 
                 editor.setLine(currentLineNumber, newLine);
                 editor.setCursor(currentCursorPosition);
@@ -185,22 +223,6 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
         await this.saveData(this.settings);
     }
 }
-
-// class SampleModal extends Modal {
-//     constructor(app: App) {
-//         super(app);
-//     }
-
-//     onOpen() {
-//         const { contentEl } = this;
-//         contentEl.setText("Woah!");
-//     }
-
-//     onClose() {
-//         const { contentEl } = this;
-//         contentEl.empty();
-//     }
-// }
 
 class SampleSettingTab extends PluginSettingTab {
     plugin: MultiStateCheckBoxSwitcherPlugin;
@@ -229,12 +251,27 @@ class SampleSettingTab extends PluginSettingTab {
                         })
                 )
                 .addToggle((toggle) =>
-                    toggle
-                        .setValue(state.isEnabled).onChange(async (value) => {
-                            state.isEnabled = value;
-                            await this.plugin.saveSettings();
-                        })
+                    toggle.setValue(state.isEnabled).onChange(async (value) => {
+                        state.isEnabled = value;
+                        await this.plugin.saveSettings();
+                    })
                 );
         });
     }
 }
+
+// class SampleModal extends Modal {
+//     constructor(app: App) {
+//         super(app);
+//     }
+
+//     onOpen() {
+//         const { contentEl } = this;
+//         contentEl.setText("Woah!");
+//     }
+
+//     onClose() {
+//         const { contentEl } = this;
+//         contentEl.empty();
+//     }
+// }
