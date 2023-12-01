@@ -18,4 +18,12 @@ and multistate checkboxes (customizable) with defaults [Quick Reference](https:/
 - [u]
 - [d]
 
-![Quick Reference](/resources/checkbox-styles.png)
+## ![Quick Reference](/resources/checkbox-styles.png)
+
+# Todo:
+- [ ] toggle empty line
+- [ ] handle with multiline selection
+
+
+
+
