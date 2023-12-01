@@ -121,8 +121,8 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
         ////////////////////////
         //My Code
         this.addCommand({
-            id: "toggle-state",
-            name: "Toggle state",
+            id: "toggle-three-state",
+            name: "Toggle 3-state checkbox",
             editorCallback: (editor: Editor, view: MarkdownView) => {
                 const currentLineNumber = editor.getCursor().line;
                 const currentCursorPosition = editor.getCursor();
