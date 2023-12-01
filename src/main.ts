@@ -15,8 +15,6 @@ import {
     SettingTab,
 } from "./SettingsTab";
 
-// Remember to rename these classes and interfaces!
-
 export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
     settings: MultiStateCheckBoxSwitcherSettings;
 
@@ -103,7 +101,7 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
             name: "Toggle 3-state checkbox",
             editorCallback: (editor: Editor, view: MarkdownView) => {
                 const currentLineNumber = editor.getCursor().line;
-                const currentCursorPosition = editor.getCursor();
+                let currentCursorPosition = editor.getCursor();
                 const currentLine = editor.getLine(currentLineNumber);
                 const pattern = /- \[.\] /;
                 let newLine = currentLine;
@@ -112,8 +110,14 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
                     newLine = currentLine.replace(pattern, "- [/] ");
                 } else if (currentLine.startsWith("- [/] ")) {
                     newLine = currentLine.replace(pattern, "- [x] ");
-                } else {
+                } else if (currentLine.startsWith("- [x] ")){
                     newLine = currentLine.replace(pattern, "- [ ] ");
+                } else {
+                    newLine = "- [ ] " + currentLine;
+                    currentCursorPosition = {
+                        ch: currentCursorPosition.ch + 6,
+                        line: currentLineNumber,
+                    };
                 }
 
                 editor.setLine(currentLineNumber, newLine);
