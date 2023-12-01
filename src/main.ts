@@ -8,36 +8,14 @@ import {
     PluginSettingTab,
     Setting,
 } from "obsidian";
+import {
+    DEFAULT_SETTINGS,
+    IStateItem,
+    MultiStateCheckBoxSwitcherSettings,
+    SampleSettingTab,
+} from "./SettingsTab";
 
 // Remember to rename these classes and interfaces!
-
-interface IStateItem {
-    value: string;
-    isEnabled: boolean;
-}
-
-interface MultiStateCheckBoxSwitcherSettings {
-    mySetting: string;
-    AdditionalStateNo1: string;
-    AdditionalStates: IStateItem[];
-}
-
-const DEFAULT_SETTINGS: MultiStateCheckBoxSwitcherSettings = {
-    mySetting: "default",
-    AdditionalStateNo1: "!",
-    AdditionalStates: [
-        { value: "!", isEnabled: true },
-        { value: "?", isEnabled: true },
-        { value: "i", isEnabled: true },
-        { value: ">", isEnabled: true },
-        { value: "<", isEnabled: true },
-        { value: "f", isEnabled: true },
-        { value: "I", isEnabled: true },
-        { value: "k", isEnabled: true },
-        { value: "u", isEnabled: true },
-        { value: "d", isEnabled: true },
-    ],
-};
 
 export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
     settings: MultiStateCheckBoxSwitcherSettings;
@@ -193,42 +171,6 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
 
     async saveSettings() {
         await this.saveData(this.settings);
-    }
-}
-
-class SampleSettingTab extends PluginSettingTab {
-    plugin: MultiStateCheckBoxSwitcherPlugin;
-
-    constructor(app: App, plugin: MultiStateCheckBoxSwitcherPlugin) {
-        super(app, plugin);
-        this.plugin = plugin;
-    }
-
-    display(): void {
-        const { containerEl } = this;
-
-        containerEl.empty();
-
-        this.plugin.settings.AdditionalStates.forEach((state, idx) => {
-            new Setting(containerEl)
-                .setName("Additional state number " + idx)
-                // .setDesc("value")
-                .addText((text) =>
-                    text
-                        .setPlaceholder("Enter single character")
-                        .setValue(state.value)
-                        .onChange(async (value) => {
-                            state.value = value;
-                            await this.plugin.saveSettings();
-                        })
-                )
-                .addToggle((toggle) =>
-                    toggle.setValue(state.isEnabled).onChange(async (value) => {
-                        state.isEnabled = value;
-                        await this.plugin.saveSettings();
-                    })
-                );
-        });
     }
 }
 
