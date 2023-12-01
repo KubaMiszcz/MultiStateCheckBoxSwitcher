@@ -29,7 +29,7 @@ export const DEFAULT_SETTINGS: MultiStateCheckBoxSwitcherSettings = {
     ],
 };
 
-export class SampleSettingTab extends PluginSettingTab {
+export class SettingTab extends PluginSettingTab {
     plugin: MultiStateCheckBoxSwitcherPlugin;
 
     constructor(app: App, plugin: MultiStateCheckBoxSwitcherPlugin) {
