@@ -1,6 +1,7 @@
 import {
     App,
     Editor,
+    EditorPosition,
     MarkdownView,
     // Modal,
     // Notice,
@@ -109,11 +110,15 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
                 const startSelectionLineNo = editor.getCursor("from").line;
                 const endSelectionLineNo = editor.getCursor("to").line;
 
-                for (let lineNo = startSelectionLineNo; lineNo <= endSelectionLineNo; lineNo++) {
+                for (
+                    let lineNo = startSelectionLineNo;
+                    lineNo <= endSelectionLineNo;
+                    lineNo++
+                ) {
                     const currentLine = editor.getLine(lineNo);
                     let newLine = currentLine;
 
-                    if (this.isAdditionalStateLine(currentLine)) {
+                    if (this.isLineAdditionalStateLine(currentLine)) {
                         continue;
                     }
 
@@ -175,8 +180,8 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
             },
         });
     }
-    
-    isAdditionalStateLine(currentLine: string) {
+
+    isLineAdditionalStateLine(currentLine: string) {
         const result = !!this.settings.AdditionalStates.find(
             (s) => s.value === currentLine[3]
         );
