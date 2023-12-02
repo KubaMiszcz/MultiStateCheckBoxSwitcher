@@ -100,27 +100,38 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
             id: "toggle-three-state",
             name: "Toggle 3-state checkbox",
             editorCallback: (editor: Editor, view: MarkdownView) => {
-                const currentLineNumber = editor.getCursor().line;
-                let currentCursorPosition = editor.getCursor();
-                const currentLine = editor.getLine(currentLineNumber);
+                // const currentLineNumber = editor.getCursor().line;
                 const pattern = /- \[.\] /;
-                let newLine = currentLine;
+                let currentCursorPosition = editor.getCursor();
+                const selectionLineHead = editor.getCursor("head");
+                const selectionLineAnchor = editor.getCursor("anchor");
 
-                if (currentLine.startsWith("- [ ] ")) {
-                    newLine = currentLine.replace(pattern, "- [/] ");
-                } else if (currentLine.startsWith("- [/] ")) {
-                    newLine = currentLine.replace(pattern, "- [x] ");
-                } else if (currentLine.startsWith("- [x] ")){
-                    newLine = currentLine.replace(pattern, "- [ ] ");
-                } else {
-                    newLine = "- [ ] " + currentLine;
-                    currentCursorPosition = {
-                        ch: currentCursorPosition.ch + 6,
-                        line: currentLineNumber,
-                    };
+                const startSelectionLineNo = editor.getCursor("from").line;
+                const endSelectionLineNo = editor.getCursor("to").line;
+                const selectionLinesCount =
+                    endSelectionLineNo - startSelectionLineNo + 1;
+
+                for (let lineNo = startSelectionLineNo; lineNo <= endSelectionLineNo; lineNo++) {
+                    const currentLine = editor.getLine(lineNo);
+                    let newLine = currentLine;
+
+                    if (currentLine.startsWith("- [ ] ")) {
+                        newLine = currentLine.replace(pattern, "- [/] ");
+                    } else if (currentLine.startsWith("- [/] ")) {
+                        newLine = currentLine.replace(pattern, "- [x] ");
+                    } else if (currentLine.startsWith("- [x] ")) {
+                        newLine = currentLine.replace(pattern, "- [ ] ");
+                    } else {
+                        newLine = "- [ ] " + currentLine;
+                        currentCursorPosition = {
+                            ch: currentCursorPosition.ch + 6,
+                            line: lineNo,
+                        };
+                    }
+                    editor.setLine(lineNo, newLine);
                 }
 
-                editor.setLine(currentLineNumber, newLine);
+                // editor.setSelections([{anchor:selectionLineAnchor,head:selectionLineHead}]);
                 editor.setCursor(currentCursorPosition);
             },
         });
