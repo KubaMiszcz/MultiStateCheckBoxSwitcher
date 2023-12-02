@@ -104,15 +104,12 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
                 // const currentLineNumber = editor.getCursor().line;
                 const pattern = /- \[.\] /;
                 let currentCursorPosition = editor.getCursor();
-                const selectionLineHead = editor.getCursor("head");
-                const selectionLineAnchor = editor.getCursor("anchor");
-
-                const startSelectionLineNo = editor.getCursor("from").line;
-                const endSelectionLineNo = editor.getCursor("to").line;
+                const startSelectionLineNo = editor.getCursor("from");
+                const endSelectionLineNo = editor.getCursor("to");
 
                 for (
-                    let lineNo = startSelectionLineNo;
-                    lineNo <= endSelectionLineNo;
+                    let lineNo = startSelectionLineNo.line;
+                    lineNo <= endSelectionLineNo.line;
                     lineNo++
                 ) {
                     const currentLine = editor.getLine(lineNo);
@@ -139,7 +136,7 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
                 }
 
                 editor.setCursor(currentCursorPosition);
-                editor.setSelection(selectionLineAnchor,selectionLineHead);
+                editor.setSelection(startSelectionLineNo,endSelectionLineNo);
             },
         });
 
