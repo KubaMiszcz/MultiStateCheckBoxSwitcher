@@ -138,8 +138,8 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
                     editor.setLine(lineNo, newLine);
                 }
 
-                // editor.setSelections([{anchor:selectionLineAnchor,head:selectionLineHead}]);
                 editor.setCursor(currentCursorPosition);
+                editor.setSelection(selectionLineAnchor,selectionLineHead);
             },
         });
 
