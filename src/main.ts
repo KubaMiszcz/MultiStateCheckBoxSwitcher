@@ -101,7 +101,6 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
             id: "toggle-three-state",
             name: "Toggle 3-state checkbox",
             editorCallback: (editor: Editor, view: MarkdownView) => {
-                // const currentLineNumber = editor.getCursor().line;
                 const pattern = /- \[.\] /;
                 let currentCursorPosition = editor.getCursor();
                 const startSelectionLineNo = editor.getCursor("from");
@@ -136,7 +135,7 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
                 }
 
                 editor.setCursor(currentCursorPosition);
-                editor.setSelection(startSelectionLineNo,endSelectionLineNo);
+                editor.setSelection(startSelectionLineNo, endSelectionLineNo);
             },
         });
 
@@ -144,36 +143,45 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
             id: "toggle-additional-states",
             name: "Toggle Additional states",
             editorCallback: (editor: Editor, view: MarkdownView) => {
-                const allStates = this.settings.AdditionalStates;
-                const currentLineNumber = editor.getCursor().line;
-                const currentLine = editor.getLine(currentLineNumber);
-                const currentCursorPosition = editor.getCursor();
-
-                let currentStateIdx = allStates.findIndex((s) =>
-                    currentLine.trimStart().startsWith(`- [${s.value}] `)
-                );
-
-                let nextState: IStateItem;
-                do {
-                    currentStateIdx++;
-
-                    if (currentStateIdx >= allStates.length) {
-                        nextState = { value: " ", isEnabled: true };
-                    } else {
-                        nextState = allStates[currentStateIdx];
-                    }
-                } while (!nextState.isEnabled);
-
                 const pattern = /- \[.\] /;
-                let newLine = currentLine;
+                const allStates = this.settings.AdditionalStates;
+                const currentCursorPosition = editor.getCursor();
+                const startSelectionLineNo = editor.getCursor("from");
+                const endSelectionLineNo = editor.getCursor("to");
 
-                newLine = currentLine.replace(
-                    pattern,
-                    `- [${nextState.value}] `
-                );
+                for (
+                    let lineNo = startSelectionLineNo.line;
+                    lineNo <= endSelectionLineNo.line;
+                    lineNo++
+                ) {
+                    const currentLine = editor.getLine(lineNo);
+                    let newLine = currentLine;
 
-                editor.setLine(currentLineNumber, newLine);
+                    let currentStateIdx = allStates.findIndex((s) =>
+                        currentLine.trimStart().startsWith(`- [${s.value}] `)
+                    );
+
+                    let nextState: IStateItem;
+                    do {
+                        currentStateIdx++;
+
+                        if (currentStateIdx >= allStates.length) {
+                            nextState = { value: " ", isEnabled: true };
+                        } else {
+                            nextState = allStates[currentStateIdx];
+                        }
+                    } while (!nextState.isEnabled);
+
+                    newLine = currentLine.replace(
+                        pattern,
+                        `- [${nextState.value}] `
+                    );
+
+                    editor.setLine(lineNo, newLine);
+                }
+
                 editor.setCursor(currentCursorPosition);
+                editor.setSelection(startSelectionLineNo, endSelectionLineNo);
             },
         });
     }
