@@ -1,6 +1,7 @@
 import {
     App,
     Editor,
+    EditorPosition,
     MarkdownView,
     // Modal,
     // Notice,
@@ -15,13 +16,12 @@ import {
     SettingTab,
 } from "./SettingsTab";
 
-// Remember to rename these classes and interfaces!
-
 export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
     settings: MultiStateCheckBoxSwitcherSettings;
 
     async onload() {
         await this.loadSettings();
+        this.validateSettings();
 
         // This creates an icon in the left ribbon.
         // const ribbonIconEl = this.addRibbonIcon(
@@ -102,22 +102,41 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
             id: "toggle-three-state",
             name: "Toggle 3-state checkbox",
             editorCallback: (editor: Editor, view: MarkdownView) => {
-                const currentLineNumber = editor.getCursor().line;
-                const currentCursorPosition = editor.getCursor();
-                const currentLine = editor.getLine(currentLineNumber);
                 const pattern = /- \[.\] /;
-                let newLine = currentLine;
+                let currentCursorPosition = editor.getCursor();
+                const startSelectionLineNo = editor.getCursor("from");
+                const endSelectionLineNo = editor.getCursor("to");
 
-                if (currentLine.startsWith("- [ ] ")) {
-                    newLine = currentLine.replace(pattern, "- [/] ");
-                } else if (currentLine.startsWith("- [/] ")) {
-                    newLine = currentLine.replace(pattern, "- [x] ");
-                } else {
-                    newLine = currentLine.replace(pattern, "- [ ] ");
+                for (
+                    let lineNo = startSelectionLineNo.line;
+                    lineNo <= endSelectionLineNo.line;
+                    lineNo++
+                ) {
+                    const currentLine = editor.getLine(lineNo);
+                    let newLine = currentLine;
+
+                    if (this.isLineAdditionalStateLine(currentLine)) {
+                        continue;
+                    }
+
+                    if (currentLine.startsWith("- [ ] ")) {
+                        newLine = currentLine.replace(pattern, "- [/] ");
+                    } else if (currentLine.startsWith("- [/] ")) {
+                        newLine = currentLine.replace(pattern, "- [x] ");
+                    } else if (currentLine.startsWith("- [x] ")) {
+                        newLine = currentLine.replace(pattern, "- [ ] ");
+                    } else {
+                        newLine = "- [ ] " + currentLine;
+                        currentCursorPosition = {
+                            ch: currentCursorPosition.ch + 6,
+                            line: lineNo,
+                        };
+                    }
+                    editor.setLine(lineNo, newLine);
                 }
 
-                editor.setLine(currentLineNumber, newLine);
                 editor.setCursor(currentCursorPosition);
+                editor.setSelection(startSelectionLineNo, endSelectionLineNo);
             },
         });
 
@@ -125,38 +144,65 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
             id: "toggle-additional-states",
             name: "Toggle Additional states",
             editorCallback: (editor: Editor, view: MarkdownView) => {
-                const allStates = this.settings.AdditionalStates;
-                const currentLineNumber = editor.getCursor().line;
-                const currentLine = editor.getLine(currentLineNumber);
-                const currentCursorPosition = editor.getCursor();
-
-                let currentStateIdx = allStates.findIndex((s) =>
-                    currentLine.trimStart().startsWith(`- [${s.value}] `)
-                );
-
-                let nextState: IStateItem;
-                do {
-                    currentStateIdx++;
-
-                    if (currentStateIdx >= allStates.length) {
-                        nextState = { value: " ", isEnabled: true };
-                    } else {
-                        nextState = allStates[currentStateIdx];
-                    }
-                } while (!nextState.isEnabled);
-
                 const pattern = /- \[.\] /;
-                let newLine = currentLine;
+                const allStates = this.settings.AdditionalStates;
+                const currentCursorPosition = editor.getCursor();
+                const startSelectionLineNo = editor.getCursor("from");
+                const endSelectionLineNo = editor.getCursor("to");
 
-                newLine = currentLine.replace(
-                    pattern,
-                    `- [${nextState.value}] `
-                );
+                for (
+                    let lineNo = startSelectionLineNo.line;
+                    lineNo <= endSelectionLineNo.line;
+                    lineNo++
+                ) {
+                    const currentLine = editor.getLine(lineNo);
+                    let newLine = currentLine;
 
-                editor.setLine(currentLineNumber, newLine);
+                    let currentStateIdx = allStates.findIndex((s) =>
+                        currentLine.trimStart().startsWith(`- [${s.value}] `)
+                    );
+
+                    let nextState: IStateItem;
+                    do {
+                        currentStateIdx++;
+
+                        if (currentStateIdx >= allStates.length) {
+                            nextState = { value: " ", isEnabled: true };
+                        } else {
+                            nextState = allStates[currentStateIdx];
+                        }
+                    } while (!nextState.isEnabled);
+
+                    newLine = currentLine.replace(
+                        pattern,
+                        `- [${nextState.value}] `
+                    );
+
+                    editor.setLine(lineNo, newLine);
+                }
+
                 editor.setCursor(currentCursorPosition);
+                editor.setSelection(startSelectionLineNo, endSelectionLineNo);
             },
         });
+    }
+
+    private validateSettings() {
+        this.settings.AdditionalStates.forEach((s) => {
+            if (s.isEnabled && s.value?.trim().length < 1) {
+                s.value = ' ';
+            }
+            if (s.value?.length > 1) {
+                s.value = s.value[0];
+            }
+        });
+    }
+
+    private isLineAdditionalStateLine(currentLine: string) {
+        const result = !!this.settings.AdditionalStates.find(
+            (s) => s.value === currentLine[3]
+        );
+        return result;
     }
 
     onunload() {}
@@ -170,6 +216,7 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
     }
 
     async saveSettings() {
+        this.validateSettings()
         await this.saveData(this.settings);
     }
 }

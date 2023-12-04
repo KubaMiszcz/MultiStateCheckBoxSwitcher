@@ -94,3 +94,8 @@ If you have multiple URLs, you can also do:
 ## API Documentation
 
 See https://github.com/obsidianmd/obsidian-api
+
+
+## Debug without sources
+app.plugins.plugins["[Plugin ID]"].constructor
+app.plugins.plugins["multi-state-checkbox-switcher"].constructor
