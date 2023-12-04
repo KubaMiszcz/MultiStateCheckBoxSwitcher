@@ -7,7 +7,7 @@ This is a plugin which handle with 3-state checkbox
 - `- [x]` done
 
 and multistate checkboxes (customizable) [Quick Reference](https://github.com/colineckert/obsidian-things/blob/main/assets/checkbox-styles.png) with defaults as follows:
-`- [!] `,` - [?] `,` - [i] `,` - [>] `,` - [<] `,` - [f] `,` - [I] `,` - [k] `,` - [u] `,` - [d] `,` - [3] `,` - [6]`
+`- [!] `, ` - [?] `, ` - [i] `, ` - [>] `, ` - [<] `, ` - [f] `, ` - [I] `, ` - [k] `, ` - [u] `, ` - [d] `, ` - [3] `, ` - [6]`
 
 ## ![Quick Reference](/resources/checkbox-styles.png)
 
