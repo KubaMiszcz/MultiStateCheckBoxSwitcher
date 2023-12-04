@@ -8,24 +8,24 @@ export interface IStateItem {
 
 export interface MultiStateCheckBoxSwitcherSettings {
     mySetting: string;
-    AdditionalStateNo1: string;
     AdditionalStates: IStateItem[];
 }
 
 export const DEFAULT_SETTINGS: MultiStateCheckBoxSwitcherSettings = {
-    mySetting: "default",
-    AdditionalStateNo1: "!",
+    mySetting: 'default',
     AdditionalStates: [
-        { value: "!", isEnabled: true },
-        { value: "?", isEnabled: true },
-        { value: "i", isEnabled: true },
-        { value: ">", isEnabled: true },
-        { value: "<", isEnabled: true },
-        { value: "f", isEnabled: true },
-        { value: "I", isEnabled: true },
-        { value: "k", isEnabled: true },
-        { value: "u", isEnabled: true },
-        { value: "d", isEnabled: true },
+        { value: '!', isEnabled: true },
+        { value: '?', isEnabled: true },
+        { value: 'i', isEnabled: true },
+        { value: '>', isEnabled: true },
+        { value: '<', isEnabled: true },
+        { value: 'f', isEnabled: true },
+        { value: 'I', isEnabled: true },
+        { value: 'k', isEnabled: true },
+        { value: 'u', isEnabled: true },
+        { value: 'q', isEnabled: true },
+        { value: '', isEnabled: false },
+        { value: '', isEnabled: false },
     ],
 };
 

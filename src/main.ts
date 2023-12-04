@@ -21,6 +21,7 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
 
     async onload() {
         await this.loadSettings();
+        this.validateSettings();
 
         // This creates an icon in the left ribbon.
         // const ribbonIconEl = this.addRibbonIcon(
@@ -186,7 +187,18 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
         });
     }
 
-    isLineAdditionalStateLine(currentLine: string) {
+    private validateSettings() {
+        this.settings.AdditionalStates.forEach((s) => {
+            if (s.isEnabled && s.value?.trim().length < 1) {
+                s.value = ' ';
+            }
+            if (s.value?.length > 1) {
+                s.value = s.value[0];
+            }
+        });
+    }
+
+    private isLineAdditionalStateLine(currentLine: string) {
         const result = !!this.settings.AdditionalStates.find(
             (s) => s.value === currentLine[3]
         );
@@ -204,6 +216,7 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
     }
 
     async saveSettings() {
+        this.validateSettings()
         await this.saveData(this.settings);
     }
 }
