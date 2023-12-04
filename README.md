@@ -11,9 +11,9 @@ and multistate checkboxes (customizable) [Quick Reference](https://github.com/co
 
 ## ![Quick Reference](/resources/checkbox-styles.png)
 
-# Features:
+## Features:
 - [x] toggle empty line
 - [x] handle with multiline selection
 
-# TODO:
+## TODO:
 - [ ] add switching reverse
