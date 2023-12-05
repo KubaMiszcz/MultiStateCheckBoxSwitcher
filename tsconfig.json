@@ -20,5 +20,5 @@
   },
   "include": [
     "**/*.ts"
-  ]
+, "resources/main-sample-plugin-code-template.tss", "resources/main-sample-plugin-code-template.tsz"  ]
 }

@@ -120,9 +120,9 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
         });
     }
 
-    private isLineAdditionalStateLine(currentLine: string) {
+    private isLineAdditionalStateLine(line: string) {
         const result = !!this.settings.AdditionalStates.find(
-            (s) => s.value === currentLine[3]
+            (s) => s.value === line[3]
         );
         return result;
     }
