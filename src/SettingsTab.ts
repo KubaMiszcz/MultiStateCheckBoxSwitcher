@@ -42,7 +42,7 @@ export class SettingTab extends PluginSettingTab {
 
         containerEl.empty();
         const fragment = document.createDocumentFragment();
-		containerEl.createEl('h1', { text: 'Multi State CheckBox Switcher' });
+		// containerEl.createEl('h1', { text: 'Multi State CheckBox Switcher' });
 
 		const descriptionEl = containerEl.createEl('div');
         descriptionEl.createEl("p").append(
