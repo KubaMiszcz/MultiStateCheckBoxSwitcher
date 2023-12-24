@@ -41,11 +41,11 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
                         continue;
                     }
 
-                    if (currentLine.startsWith("- [ ] ")) {
+                    if (currentLine.trimStart().startsWith("- [ ] ")) {
                         newLine = currentLine.replace(pattern, "- [/] ");
-                    } else if (currentLine.startsWith("- [/] ")) {
+                    } else if (currentLine.trimStart().startsWith("- [/] ")) {
                         newLine = currentLine.replace(pattern, "- [x] ");
-                    } else if (currentLine.startsWith("- [x] ")) {
+                    } else if (currentLine.trimStart().startsWith("- [x] ")) {
                         newLine = currentLine.replace(pattern, "- [ ] ");
                     } else {
                         newLine = "- [ ] " + currentLine;
