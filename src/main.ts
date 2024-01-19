@@ -38,6 +38,8 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
                     let newLine = currentLine;
 
                     if (this.isLineAdditionalStateLine(currentLine)) {
+                        newLine = currentLine.replace(pattern, "- [ ] ");
+                        editor.setLine(lineNo, newLine);
                         continue;
                     }
 

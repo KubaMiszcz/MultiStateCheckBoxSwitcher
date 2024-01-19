@@ -98,4 +98,5 @@ See https://github.com/obsidianmd/obsidian-api
 
 ## Debug without sources
 app.plugins.plugins["[Plugin ID]"].constructor
+for this plugin it means:
 app.plugins.plugins["multi-state-checkbox-switcher"].constructor
