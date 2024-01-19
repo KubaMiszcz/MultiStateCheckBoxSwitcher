@@ -78,15 +78,16 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
         });
     }
 
-    private toggleAdditionalStates(
-        editor: Editor,
-        isForwardDirection = true
-    ) {
+    private toggleAdditionalStates(editor: Editor, isForwardDirection = true) {
         const pattern = /- \[.\] /;
-        const allStates = this.settings.AdditionalStates;
+        const allStates = [...this.settings.AdditionalStates];
         const currentCursorPosition = editor.getCursor();
         const startSelectionLineNo = editor.getCursor("from");
         const endSelectionLineNo = editor.getCursor("to");
+
+        if (!isForwardDirection) {
+            allStates.reverse();
+        }
 
         for (
             let lineNo = startSelectionLineNo.line;
@@ -102,13 +103,9 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
 
             let nextState: IStateItem;
             do {
-                if (isForwardDirection) {
-                    currentStateIdx++;
-                } else {
-                    currentStateIdx--;
-                }
+                currentStateIdx++;
 
-                if (currentStateIdx >= allStates.length || currentStateIdx < 0) {
+                if (currentStateIdx >= allStates.length) {
                     nextState = { value: " ", isEnabled: true };
                 } else {
                     nextState = allStates[currentStateIdx];
