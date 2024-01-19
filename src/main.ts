@@ -5,7 +5,7 @@ import {
     MultiStateCheckBoxSwitcherSettings,
     SettingTab,
 } from "./SettingsTab";
-import { DIRECTION_ENUM } from "./constants.enum";
+import { simpleStatesList } from "./constants";
 
 export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
     settings: MultiStateCheckBoxSwitcherSettings;
@@ -21,43 +21,7 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
             id: "toggle-three-state",
             name: "Toggle 3-state checkbox",
             editorCallback: (editor: Editor, view: MarkdownView) => {
-                const pattern = /- \[.\] /;
-                let currentCursorPosition = editor.getCursor();
-                const startSelectionLineNo = editor.getCursor("from");
-                const endSelectionLineNo = editor.getCursor("to");
-
-                for (
-                    let lineNo = startSelectionLineNo.line;
-                    lineNo <= endSelectionLineNo.line;
-                    lineNo++
-                ) {
-                    const currentLine = editor.getLine(lineNo);
-                    let newLine = currentLine;
-
-                    if (this.isLineAdditionalStateLine(currentLine)) {
-                        newLine = currentLine.replace(pattern, "- [ ] ");
-                        editor.setLine(lineNo, newLine);
-                        continue;
-                    }
-
-                    if (currentLine.trimStart().startsWith("- [ ] ")) {
-                        newLine = currentLine.replace(pattern, "- [/] ");
-                    } else if (currentLine.trimStart().startsWith("- [/] ")) {
-                        newLine = currentLine.replace(pattern, "- [x] ");
-                    } else if (currentLine.trimStart().startsWith("- [x] ")) {
-                        newLine = currentLine.replace(pattern, "- [ ] ");
-                    } else {
-                        newLine = "- [ ] " + currentLine;
-                        currentCursorPosition = {
-                            ch: currentCursorPosition.ch + 6,
-                            line: lineNo,
-                        };
-                    }
-                    editor.setLine(lineNo, newLine);
-                }
-
-                editor.setCursor(currentCursorPosition);
-                editor.setSelection(startSelectionLineNo, endSelectionLineNo);
+                this.toggleAdditionalStates(editor, simpleStatesList, false);
             },
         });
 
@@ -65,11 +29,11 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
             id: "toggle-three-state-reverse",
             name: "Toggle 3-state checkbox in reverse",
             editorCallback: (editor: Editor, view: MarkdownView) => {
-                const statesList: IStateItem[] = [
-                    { value: "/", isEnabled: true },
-                    { value: "x", isEnabled: true },
-                ].reverse();
-                this.toggleAdditionalStates(editor, statesList, false);
+                this.toggleAdditionalStates(
+                    editor,
+                    [...simpleStatesList].reverse(),
+                    false
+                );
             },
         });
 
@@ -89,11 +53,11 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
             id: "toggle-additional-states-reverse",
             name: "Toggle Additional states in reverse",
             editorCallback: (editor: Editor, view: MarkdownView) => {
-                const statesList = [
-                    ...this.settings.AdditionalStates,
-                ].reverse();
-
-                this.toggleAdditionalStates(editor, statesList, false);
+                this.toggleAdditionalStates(
+                    editor,
+                    [...this.settings.AdditionalStates].reverse(),
+                    false
+                );
             },
         });
     }
