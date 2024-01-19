@@ -62,6 +62,18 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
         });
 
         this.addCommand({
+            id: "toggle-three-state-reverse",
+            name: "Toggle 3-state checkbox in reverse",
+            editorCallback: (editor: Editor, view: MarkdownView) => {
+                const statesList: IStateItem[] = [
+                    { value: "/", isEnabled: true },
+                    { value: "x", isEnabled: true },
+                ].reverse();
+                this.toggleAdditionalStates(editor, statesList, false);
+            },
+        });
+
+        this.addCommand({
             id: "toggle-additional-states",
             name: "Toggle Additional states",
             editorCallback: (editor: Editor, view: MarkdownView) => {
