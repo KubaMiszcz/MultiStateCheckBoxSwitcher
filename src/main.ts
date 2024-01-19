@@ -65,7 +65,11 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
             id: "toggle-additional-states",
             name: "Toggle Additional states",
             editorCallback: (editor: Editor, view: MarkdownView) => {
-                this.toggleAdditionalStates(editor, true);
+                this.toggleAdditionalStates(
+                    editor,
+                    this.settings.AdditionalStates,
+                    true
+                );
             },
         });
 
@@ -73,21 +77,25 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
             id: "toggle-additional-states-reverse",
             name: "Toggle Additional states in reverse",
             editorCallback: (editor: Editor, view: MarkdownView) => {
-                this.toggleAdditionalStates(editor, false);
+                const statesList = [
+                    ...this.settings.AdditionalStates,
+                ].reverse();
+
+                this.toggleAdditionalStates(editor, statesList, false);
             },
         });
     }
 
-    private toggleAdditionalStates(editor: Editor, isForwardDirection = true) {
+    private toggleAdditionalStates(
+        editor: Editor,
+        statesList: IStateItem[],
+        isForwardDirection = true
+    ) {
         const pattern = /- \[.\] /;
-        const allStates = [...this.settings.AdditionalStates];
+        const allStates = statesList;
         const currentCursorPosition = editor.getCursor();
         const startSelectionLineNo = editor.getCursor("from");
         const endSelectionLineNo = editor.getCursor("to");
-
-        if (!isForwardDirection) {
-            allStates.reverse();
-        }
 
         for (
             let lineNo = startSelectionLineNo.line;
