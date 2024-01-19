@@ -78,7 +78,13 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
             lineNo <= endSelectionLineNo.line;
             lineNo++
         ) {
-            const currentLine = editor.getLine(lineNo);
+            let currentLine = editor.getLine(lineNo);
+            if (!currentLine.trimStart().startsWith('- [')) {
+                currentLine = "- [ ] " + currentLine;
+                editor.setLine(lineNo, currentLine);
+                continue;
+            }
+
             let newLine = currentLine;
 
             let currentStateIdx = allStates.findIndex((s) =>

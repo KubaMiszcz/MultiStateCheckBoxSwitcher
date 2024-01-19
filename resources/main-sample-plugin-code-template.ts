@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
     App,
     Editor,
@@ -200,7 +201,7 @@ export default class MultiStateCheckBoxSwitcherPlugin extends Plugin {
 
     private isLineAdditionalStateLine(currentLine: string) {
         const result = !!this.settings.AdditionalStates.find(
-            (s) => s.value === currentLine[3]
+            (s: any) => s.value === currentLine[3]
         );
         return result;
     }
